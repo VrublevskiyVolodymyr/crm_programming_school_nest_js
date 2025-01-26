@@ -71,7 +71,7 @@ Follow the steps below to run the project:
 
    Replace `<PORT>` with the port number specified in your `environments/local.env` configuration file.
 
-5. ru**Enjoy the application!** 😊
+5. **Enjoy the application!** 😊
 
 
 ----
