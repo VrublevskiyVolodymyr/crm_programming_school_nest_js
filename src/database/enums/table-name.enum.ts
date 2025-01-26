@@ -1,0 +1,16 @@
+export enum TableNameEnum {
+  REFRESH_TOKENS = 'refresh_tokens',
+  ACTION_TOKENS = 'action_tokens',
+  OLD_PASSWORD = 'old_password',
+  USERS = 'users',
+  DEALERSHIPS = 'dealerships',
+  CARS = 'cars',
+  REGIONS = 'regions',
+  PRODUCERS = 'producers',
+  MODELS = 'models',
+  CURRENCY = 'currency_privatbank',
+  PRICECAR = 'price-car',
+  VIEW = 'view',
+  ADVERTISEMENT = 'advertisement',
+  PREMIUM = 'premium',
+}
