@@ -1,22 +1,12 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { DealershipID, UserID } from '../../common/types/entity-ids.type';
-import { AccountTypeEnum } from '../../modules/users/enums/account-type.enum';
+import { UserID } from '../../common/types/entity-ids.type';
 import { UserRoleEnum } from '../../modules/users/enums/user-role.enum';
 import { TableNameEnum } from '../enums/table-name.enum';
 import { CreateUpdateModel } from '../models/create-update.model';
+import { AccessTokenEntity } from './access.token.entity';
 import { ActionTokenEntity } from './action.token.entity';
-import { AdvertisementEntity } from './advertisement.entity';
-import { CarEntity } from './cars.entity';
-import { DealershipEntity } from './dealership.entity';
-import { OldPasswordEntity } from './old-password.entity';
+import { OrderEntity } from './order.entity';
 import { RefreshTokenEntity } from './refresh-token.entity';
 
 @Entity(TableNameEnum.USERS)
@@ -25,70 +15,47 @@ export class UserEntity extends CreateUpdateModel {
   id: UserID;
 
   @Column('text')
-  firstName: string;
+  name: string;
 
   @Column('text')
-  lastName: string;
+  surname: string;
 
-  @Column('text', { unique: true })
+  @Column('varchar', { length: 255, unique: true })
   email: string;
 
   @Column('text', { select: false })
   password: string;
 
-  @Column('text', { unique: true })
-  device_id: string;
-
-  @Column('text', { nullable: true, unique: true })
-  phone?: string;
-
-  @Column('text', { nullable: true })
-  image?: string;
-
   @Column({
     type: 'enum',
     enum: UserRoleEnum,
-    array: true,
   })
-  roles: UserRoleEnum[];
+  role: UserRoleEnum;
+
+  @OneToMany(() => AccessTokenEntity, (entity) => entity.user)
+  access_tokens?: AccessTokenEntity[];
 
   @OneToMany(() => RefreshTokenEntity, (entity) => entity.user)
-  refreshTokens?: RefreshTokenEntity[];
+  refresh_tokens?: RefreshTokenEntity[];
 
   @OneToMany(() => ActionTokenEntity, (entity) => entity.user)
-  actionTokens: ActionTokenEntity[];
+  action_tokens?: ActionTokenEntity[];
 
-  @OneToMany(() => OldPasswordEntity, (entity) => entity.user)
-  oldPasswords: OldPasswordEntity[];
-
-  @OneToMany(() => CarEntity, (entity) => entity.user)
-  cars: CarEntity[];
+  @OneToMany(() => OrderEntity, (order) => order.manager)
+  orders?: OrderEntity[];
 
   @Column({
-    type: 'enum',
-    enum: AccountTypeEnum,
-    default: AccountTypeEnum.BASIC,
+    type: 'datetime',
+    nullable: true,
   })
-  accountType: AccountTypeEnum;
-
-  @Column('boolean', { default: false })
-  is_verified: boolean;
+  last_login?: Date;
 
   @Column('boolean', { default: false })
   is_active: boolean;
 
-  @Column('integer', { nullable: true })
-  countOfAds: number;
+  @Column('boolean', { default: false })
+  is_superuser: boolean;
 
-  @OneToMany(() => AdvertisementEntity, (entity) => entity.user)
-  advertisements: AdvertisementEntity[];
-
-  @Column({ nullable: true })
-  dealership_id?: DealershipID;
-
-  @ManyToOne(() => DealershipEntity, (dealership) => dealership.employees, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'dealership_id' })
-  dealership?: DealershipEntity;
+  @Column('boolean', { default: false })
+  is_staff: boolean;
 }

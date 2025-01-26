@@ -4,16 +4,16 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { Config, PostgresConfig } from '../../config/config.types';
+import { Config, MysqlConfig } from '../../config/config.types';
 
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
       imports: undefined,
       useFactory: async (configService: ConfigService<Config>) => {
-        const config = configService.get<PostgresConfig>('postgres');
+        const config = configService.get<MysqlConfig>('mysql');
         return {
-          type: 'postgres',
+          type: 'mysql',
           host: config.host,
           port: config.port,
           username: config.user,
@@ -41,10 +41,11 @@ import { Config, PostgresConfig } from '../../config/config.types';
           ],
           migrationsRun: true,
           synchronize: false,
+          dropSchema: false,
         };
       },
       inject: [ConfigService],
     }),
   ],
 })
-export class PostgresModule {}
+export class MysqlModule {}

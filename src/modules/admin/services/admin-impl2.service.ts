@@ -1,19 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
 import { UserID } from '../../../common/types/entity-ids.type';
-import { UserEntity } from '../../../database/entities/user.entity';
-import { IUserData } from '../../auth/interfaces/user-data.interface';
-import { UpdateUserDto } from '../dto/req/update-user.dto';
-import { UserQueryDto } from '../dto/req/user-query.dto';
-import { UsersService } from './users.service';
+import { SignUpReqDto } from '../../auth/dto/req/sign-up.req.dto';
+import { ActionResDto } from '../../auth/dto/res/token-pair.res.dto';
+import { PaginationQueryDto } from '../../users/dto/req/pagination-query.dto';
+import { AdminUserResDto } from '../../users/dto/res/admin-user.res.dto';
+import { PaginationListResDto } from '../../users/dto/res/pagination-list.res.dto';
+import { AdminService } from './admin.service';
 
 @Injectable()
-export class UsersServiceImpl2 implements UsersService {
-  findMe(userData: IUserData): Promise<UserEntity> {
-    return Promise.resolve(undefined);
-  }
-
-  findOne(userId: UserID): Promise<UserEntity> {
+export class AdminServiceImpl2 implements AdminService {
+  signUpManager(dto: SignUpReqDto): Promise<AdminUserResDto> {
     return Promise.resolve(undefined);
   }
 
@@ -21,15 +18,21 @@ export class UsersServiceImpl2 implements UsersService {
     return Promise.resolve(undefined);
   }
 
-  updateMe(userData: IUserData, dto: UpdateUserDto): Promise<UserEntity> {
+  requestToken(id: UserID): Promise<ActionResDto> {
     return Promise.resolve(undefined);
   }
 
-  removeUser(userId: UserID): Promise<void> {
+  banManager(userId: UserID): Promise<AdminUserResDto> {
     return Promise.resolve(undefined);
   }
 
-  findByParams(query: UserQueryDto): Promise<UserEntity[]> {
-    return Promise.resolve([]);
+  unbanManager(userId: UserID): Promise<AdminUserResDto> {
+    return Promise.resolve(undefined);
+  }
+
+  findAllWithPagination(
+    query: PaginationQueryDto,
+  ): Promise<PaginationListResDto> {
+    return Promise.resolve(undefined);
   }
 }

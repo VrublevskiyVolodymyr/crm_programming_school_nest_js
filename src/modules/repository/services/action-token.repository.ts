@@ -20,7 +20,7 @@ export class ActionTokenRepository extends Repository<ActionTokenEntity> {
       .execute();
   }
 
-  async isActionTokenExist(actionToken: string): Promise<boolean> {
-    return await this.exists({ where: { actionToken } });
+  async isActionTokenExist(action_token: string): Promise<boolean> {
+    return await this.exists({ where: { action_token } });
   }
 }

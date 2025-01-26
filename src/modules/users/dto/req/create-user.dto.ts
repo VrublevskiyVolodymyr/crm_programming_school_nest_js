@@ -27,7 +27,7 @@ export class CreateUserDto {
   @ApiProperty({ example: '123qwe!@#QWE' })
   @Transform(TransformHelper.trim)
   @IsString()
-  @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%_*#?&])[A-Za-z\d@$_!%*#?&]{8,}$/)
+  @Matches(/^(?=.*[a-zA-Zа-яА-ЯЇЁіІё])(?=.*\d)(?=.*[@#$%^&+=!]).*$|^admin$/)
   public readonly password: string;
 
   @Transform(TransformHelper.trim)

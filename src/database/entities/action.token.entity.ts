@@ -1,7 +1,6 @@
 import {
   Column,
   Entity,
-  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -18,19 +17,15 @@ export class ActionTokenEntity extends CreateUpdateModel {
   @PrimaryGeneratedColumn('uuid')
   id: ActionTokenID;
 
-  @Column('text')
-  actionToken: string;
-
-  @Index()
-  @Column('text')
-  device_id: string;
+  @Column('text', { nullable: true })
+  action_token: string;
 
   @Column('text')
   type: ActionTokenTypeEnum;
 
   @Column()
   user_id: UserID;
-  @ManyToOne(() => UserEntity, (entity) => entity.actionTokens, {
+  @ManyToOne(() => UserEntity, (entity) => entity.action_tokens, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'user_id' })

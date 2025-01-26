@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Raw, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { UserID } from '../../../common/types/entity-ids.type';
 import { UserEntity } from '../../../database/entities/user.entity';
 import { TableNameEnum } from '../../../database/enums/table-name.enum';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
-import { UserRoleEnum } from '../../users/enums/user-role.enum';
 
 @Injectable()
 export class UserRepository extends Repository<UserEntity> {
@@ -46,21 +45,17 @@ export class UserRepository extends Repository<UserEntity> {
     return await query.getMany();
   }
 
-  public async findByRole(role: UserRoleEnum): Promise<UserEntity | undefined> {
-    return await this.createQueryBuilder(TableNameEnum.USERS)
-      .where(`:role = ANY(${TableNameEnum.USERS}.roles)`, { role })
-      .getOne();
-  }
+  public async findAllWithPagination(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<[UserEntity[], number]> {
+    const query = this.createQueryBuilder(TableNameEnum.USERS);
 
-  public async findWithOutActivity(date: Date): Promise<UserEntity[]> {
-    return await this.createQueryBuilder(TableNameEnum.USERS)
-      .leftJoin(
-        `${TableNameEnum.USERS}.refreshTokens`,
-        'refreshToken',
-        'refreshToken.createdAt > :date',
-        { date },
-      )
-      .where('refreshToken.id IS NULL')
-      .getMany();
+    query.orderBy(`${TableNameEnum.USERS}.created_at`, 'DESC');
+
+    query.skip((page - 1) * limit).take(limit);
+
+    const [users, total] = await query.getManyAndCount();
+    return [users, total];
   }
 }

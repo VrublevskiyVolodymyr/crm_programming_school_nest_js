@@ -1,7 +1,6 @@
 import {
   Column,
   Entity,
-  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -17,16 +16,12 @@ export class RefreshTokenEntity extends CreateUpdateModel {
   @PrimaryGeneratedColumn('uuid')
   id: RefreshTokenID;
 
-  @Column('text')
-  refreshToken: string;
-
-  @Index()
-  @Column('text')
-  device_id: string;
+  @Column('text', { nullable: true })
+  refresh_token: string;
 
   @Column()
   user_id: UserID;
-  @ManyToOne(() => UserEntity, (entity) => entity.refreshTokens, {
+  @ManyToOne(() => UserEntity, (entity) => entity.refresh_tokens, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'user_id' })

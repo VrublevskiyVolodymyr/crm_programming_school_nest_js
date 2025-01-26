@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 
-import { EmailModule } from '../email/email.module';
-import { RedisModule } from '../redis/redis.module';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { JwtAccessGuard } from './guards/jwt-access.guard';
@@ -12,10 +10,11 @@ import { RolesGuard } from './guards/roles.guard';
 import { AuthService } from './services/auth.service';
 import { AuthCacheService } from './services/auth-cache.service';
 import { PasswordService } from './services/password.service';
+import { SeederAdminService } from './services/seeder.service';
 import { TokenService } from './services/token.service';
 
 @Module({
-  imports: [JwtModule, RedisModule, UsersModule, EmailModule, ConfigModule],
+  imports: [JwtModule, UsersModule, ConfigModule],
   controllers: [AuthController],
   providers: [
     {
@@ -30,7 +29,8 @@ import { TokenService } from './services/token.service';
     TokenService,
     AuthCacheService,
     PasswordService,
+    SeederAdminService,
   ],
-  exports: [AuthCacheService],
+  exports: [AuthCacheService, PasswordService, TokenService],
 })
 export class AuthModule {}

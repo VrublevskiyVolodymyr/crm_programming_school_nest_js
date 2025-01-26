@@ -1,20 +1,9 @@
 import { UserEntity } from '../../database/entities/user.entity';
 import { IJwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { IUserData } from '../auth/interfaces/user-data.interface';
-import { AdminUserResDto } from './dto/res/admin-user.dto';
-import { PrivateUserResDto } from './dto/res/privat-user.res.dto';
+import { AdminUserResDto } from '../users/dto/res/admin-user.res.dto';
 
-export class UserMapper {
-  public static toResponseDTO(data: UserEntity): PrivateUserResDto {
-    return {
-      id: data.id,
-      name: data.name,
-      surname: data.surname,
-      email: data.email,
-      phone: data.phone ? data.phone : null,
-    };
-  }
-
+export class AdminMapper {
   public static toIUserData(user: UserEntity, payload: IJwtPayload): IUserData {
     return {
       userId: payload.userId,
@@ -29,10 +18,10 @@ export class UserMapper {
       name: data.name,
       surname: data.surname,
       email: data.email,
-      phone: data.phone ? data.phone : null,
+      is_staff: data.is_staff,
+      is_superuser: data.is_superuser,
       is_active: data.is_active,
       last_login: data.last_login,
-      is_superuser: data.is_superuser,
     };
   }
 }

@@ -6,25 +6,24 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { SwaggerHelper } from './common/helpers/swagger.helper';
 import { AppConfig } from './config/config.types';
 import { AppModule } from './modules/app.module';
-import { SeederService } from './modules/cars/services/seeder.service';
-import { CurrencyService } from './modules/financial/services/currency.service';
+import { SeederAdminService } from './modules/auth/services/seeder.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const seeder = app.get(SeederService);
-  const currency = app.get(CurrencyService);
-  await seeder.seedData();
-  await currency.updateCurrencyRates();
-
   const configService = app.get(ConfigService);
   const appConfig = configService.get<AppConfig>('app');
 
+  const seeder = app.get(SeederAdminService);
+  await seeder.seedAdmin();
+
+  const globalPrefix = 'api/v1';
+  app.setGlobalPrefix(globalPrefix);
+
   const config = new DocumentBuilder()
-    .setTitle('crm_programming_school')
+    .setTitle('CRM Programming School')
     .setDescription(
-      'API for the CRM system of Programming School. It includes functionality for user authentication,\n' +
-        'managing applications, filtering, creating managers, handling roles, and generating statistics.',
+      `[ Base URL: http://${appConfig.host}:${appConfig.port}/api/v1 ]`,
     )
     .setVersion('1.0.0')
     .addBearerAuth({
@@ -33,11 +32,30 @@ async function bootstrap() {
       bearerFormat: 'JWT',
       in: 'header',
     })
+    .addTag(
+      'CRM Programming School',
+      'A robust backend to streamline application management and enhance efficiency.',
+    )
+    .setTermsOfService('https://policies.google.com/terms')
+    .setContact('Developer', '', 'v637904@gmaol.com')
+    .setLicense('BSD License', 'http://opensource.org/licenses/BSD-3-Clause')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+  document.paths = Object.keys(document.paths).reduce((acc, path) => {
+    const modifiedPath = path.startsWith('/api/v1')
+      ? path.replace('/api/v1', '')
+      : path;
+    acc[modifiedPath] = document.paths[path];
+    return acc;
+  }, {});
+  document.servers = [
+    {
+      url: `http://${appConfig.host}:${appConfig.port}/api/v1`,
+    },
+  ];
   SwaggerHelper.setDefaultResponses(document);
-  SwaggerModule.setup('docs', app, document, {
+  SwaggerModule.setup(`api/v1/docs`, app, document, {
     swaggerOptions: {
       docExpansion: 'list',
       defaultModelsExpandDepth: 7,
@@ -54,9 +72,11 @@ async function bootstrap() {
   );
 
   await app.listen(appConfig.port, () => {
-    Logger.log(`Server running on http://${appConfig.host}:${appConfig.port}`);
     Logger.log(
-      `Swagger running on http://${appConfig.host}:${appConfig.port}/docs`,
+      `Server running on http://${appConfig.host}:${appConfig.port}/api/v1`,
+    );
+    Logger.log(
+      `Swagger running on http://${appConfig.host}:${appConfig.port}/api/v1/docs`,
     );
   });
 }

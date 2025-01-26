@@ -1,26 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 
-import { ActionTokenEntity } from '../../../database/entities/action.token.entity';
+import { AccessTokenEntity } from '../../../database/entities/access.token.entity';
 
 @Injectable()
-export class ActionTokenRepository extends Repository<ActionTokenEntity> {
+export class AccessTokenRepository extends Repository<AccessTokenEntity> {
   constructor(private readonly dataSource: DataSource) {
-    super(ActionTokenEntity, dataSource.manager);
+    super(AccessTokenEntity, dataSource.manager);
   }
 
   public async deleteManyByParams(
-    params: Partial<ActionTokenEntity>,
+    params: Partial<AccessTokenEntity>,
   ): Promise<void> {
     await this.dataSource
       .createQueryBuilder()
       .delete()
-      .from(ActionTokenEntity)
+      .from(AccessTokenEntity)
       .where(params)
       .execute();
   }
 
-  async isActionTokenExist(action_token: string): Promise<boolean> {
-    return await this.exists({ where: { action_token } });
+  async isAccessTokenExist(access_token: string): Promise<boolean> {
+    return await this.exists({ where: { access_token } });
   }
 }

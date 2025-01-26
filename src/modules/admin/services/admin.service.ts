@@ -1,19 +1,22 @@
 import { UserID } from '../../../common/types/entity-ids.type';
-import { UserEntity } from '../../../database/entities/user.entity';
-import { IUserData } from '../../auth/interfaces/user-data.interface';
-import { UpdateUserDto } from '../dto/req/update-user.dto';
-import { UserQueryDto } from '../dto/req/user-query.dto';
+import { SignUpReqDto } from '../../auth/dto/req/sign-up.req.dto';
+import { ActionResDto } from '../../auth/dto/res/token-pair.res.dto';
+import { PaginationQueryDto } from '../../users/dto/req/pagination-query.dto';
+import { AdminUserResDto } from '../../users/dto/res/admin-user.res.dto';
+import { PaginationListResDto } from '../../users/dto/res/pagination-list.res.dto';
 
-export interface UsersService {
-  findMe(userData: IUserData): Promise<UserEntity>;
-
-  updateMe(userData: IUserData, dto: UpdateUserDto): Promise<UserEntity>;
-
-  removeUser(userId: UserID): Promise<void>;
-
-  findOne(userId: UserID): Promise<UserEntity>;
+export interface AdminService {
+  signUpManager(dto: SignUpReqDto): Promise<AdminUserResDto>;
 
   isEmailExistOrThrow(email: string): Promise<void>;
 
-  findByParams(query: UserQueryDto): Promise<UserEntity[]>;
+  findAllWithPagination(
+    query: PaginationQueryDto,
+  ): Promise<PaginationListResDto>;
+
+  requestToken(id: UserID): Promise<ActionResDto>;
+
+  banManager(userId: UserID): Promise<AdminUserResDto>;
+
+  unbanManager(userId: UserID): Promise<AdminUserResDto>;
 }

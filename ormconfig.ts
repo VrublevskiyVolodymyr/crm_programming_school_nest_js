@@ -7,10 +7,10 @@ import getter from './src/config/configuration';
 
 dotenv.config({ path: './environments/local.env' });
 
-const databaseConfig = getter().postgres;
+const databaseConfig = getter().mysql;
 
 export default new DataSource({
-  type: 'postgres',
+  type: 'mysql',
   host: databaseConfig.host,
   port: databaseConfig.port,
   username: databaseConfig.user,

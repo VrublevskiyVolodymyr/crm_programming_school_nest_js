@@ -1,113 +1,100 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
-  HttpCode,
-  HttpStatus,
   Inject,
   Param,
   ParseUUIDPipe,
   Patch,
+  Post,
   Query,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiConflictResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConflictResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 import { UserID } from '../../common/types/entity-ids.type';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { IUserData } from '../auth/interfaces/user-data.interface';
-import { UpdateUserDto } from './dto/req/update-user.dto';
-import { UserQueryDto } from './dto/req/user-query.dto';
-import { PrivateUserResDto } from './dto/res/privat-user.res.dto';
-import { UsersService } from './services/users.service';
-import { UserMapper } from './user.mapper';
+import { SignUpReqDto } from '../auth/dto/req/sign-up.req.dto';
+import { ActionResDto } from '../auth/dto/res/token-pair.res.dto';
+import { PaginationQueryDto } from '../users/dto/req/pagination-query.dto';
+import { AdminUserResDto } from '../users/dto/res/admin-user.res.dto';
+import { PaginationListResDto } from '../users/dto/res/pagination-list.res.dto';
+import { UserRoleEnum } from '../users/enums/user-role.enum';
+import { AdminService } from './services/admin.service';
 
-@ApiTags('Users')
-@Controller('users')
-export class UsersController {
+@ApiTags('Admin')
+@Controller('admin')
+export class AdminController {
   constructor(
-    @Inject('UsersService') private readonly usersService: UsersService,
+    @Inject('AdminService') private readonly adminService: AdminService,
   ) {}
 
   @ApiBearerAuth()
+  @Roles('admin')
   @ApiConflictResponse({ description: 'Conflict' })
   @ApiOperation({
-    summary: 'Get Current User Information',
+    summary: 'Sign up manager',
     description:
-      'Fetches detailed information about the currently authenticated user.',
+      'This endpoint is for admins to create manager accounts, allowing the user to manage various parts of the platform and oversee operations.',
   })
-  @Get('me')
-  public async findMe(
-    @CurrentUser() userData: IUserData,
-  ): Promise<PrivateUserResDto> {
-    const result = await this.usersService.findMe(userData);
-    return UserMapper.toResponseDTO(result);
+  @Post('users')
+  public async signUpManager(
+    @Body() dto: SignUpReqDto,
+  ): Promise<AdminUserResDto> {
+    dto.role = UserRoleEnum.MANAGER;
+    return await this.adminService.signUpManager(dto);
   }
 
   @ApiBearerAuth()
+  @Roles('admin')
   @ApiOperation({
-    summary: 'Update Current User Information',
+    summary: 'Get token',
     description:
-      'Updates the details of the currently authenticated user based on the provided data.',
+      'This endpoint is for get some token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBnbWFpb...',
   })
-  @Patch('me')
-  public async updateMe(
-    @CurrentUser() userData: IUserData,
-    @Body() dto: UpdateUserDto,
-  ): Promise<PrivateUserResDto> {
-    const result = await this.usersService.updateMe(userData, dto);
-    return UserMapper.toResponseDTO(result);
-  }
-
-  @ApiBearerAuth()
-  @Roles('admin', 'manager')
-  @ApiConflictResponse({ description: 'Conflict' })
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({
-    summary: 'Delete User by ID',
-    description:
-      'Deletes a user from the system based on their unique user ID. This action is restricted to admin and manager roles.',
-  })
-  @Delete(':userId')
-  public async removeUser(
+  @Post('users/:userId/re_token')
+  public async requestToken(
     @Param('userId', ParseUUIDPipe) userId: UserID,
-  ): Promise<void> {
-    return await this.usersService.removeUser(userId);
+  ): Promise<ActionResDto> {
+    return await this.adminService.requestToken(userId);
   }
 
   @ApiBearerAuth()
-  @Roles('admin', 'manager')
+  @Roles('admin')
   @ApiOperation({
-    summary: 'Get User by ID',
-    description:
-      'Retrieves detailed information about a user by their unique user ID. Accessible to admin and manager roles.',
+    summary: 'Ban manager',
+    description: 'This endpoint is for ban manager.',
   })
-  @Get(':userId')
-  public async findOne(
+  @Patch('users/:userId/ban')
+  public async banManager(
     @Param('userId', ParseUUIDPipe) userId: UserID,
-  ): Promise<PrivateUserResDto> {
-    const result = await this.usersService.findOne(userId);
-    return UserMapper.toResponseDTO(result);
+  ): Promise<AdminUserResDto> {
+    return await this.adminService.banManager(userId);
   }
 
   @ApiBearerAuth()
-  @Roles('admin', 'manager')
+  @Roles('admin')
+  @ApiOperation({
+    summary: 'Unban manager',
+    description: 'This endpoint is for unban manager.',
+  })
+  @Patch('users/:userId/unban')
+  public async unbanManager(
+    @Param('userId', ParseUUIDPipe) userId: UserID,
+  ): Promise<AdminUserResDto> {
+    return await this.adminService.unbanManager(userId);
+  }
+
+  @ApiBearerAuth()
+  @Roles('admin')
   @ApiOperation({
     summary: 'Search Users',
     description:
-      'Fetches a list of users based on the provided query parameters. Restricted to admin and manager roles.',
+      'Retrieves a paginated list of users based on the provided query parameters. Restricted to admin role.',
   })
-  @Get()
-  public async findByParams(
-    @Query() query: UserQueryDto,
-  ): Promise<PrivateUserResDto[]> {
-    const result = await this.usersService.findByParams(query);
-    return result.map((user) => UserMapper.toResponseDTO(user));
+  @Get('users')
+  public async findAllWithPagination(
+    @Query() query: PaginationQueryDto,
+  ): Promise<PaginationListResDto> {
+    return await this.adminService.findAllWithPagination(query);
   }
 }

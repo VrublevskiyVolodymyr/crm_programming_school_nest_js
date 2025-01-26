@@ -5,8 +5,3 @@ export class AuthResDto {
   tokens: TokenPairResDto;
   user: PublicUserResDto;
 }
-
-export class AuthSignUpResDto {
-  user: PublicUserResDto;
-  message: string;
-}

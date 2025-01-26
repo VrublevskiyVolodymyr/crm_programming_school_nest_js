@@ -2,20 +2,12 @@ import { UserID } from '../../../common/types/entity-ids.type';
 import { UserRoleEnum } from '../../users/enums/user-role.enum';
 
 export interface IUserData {
-  firstName?: string;
+  name?: string;
   userId: UserID;
   password?: string;
-  deviceId: string;
   email: string;
-  roles: UserRoleEnum[];
-  is_verified?: boolean;
+  role: UserRoleEnum;
+  last_login?: Date;
   is_active?: boolean;
+  is_superuser?: boolean;
 }
-
-export type IResetPasswordSend = Pick<IUserData, 'email'>;
-
-export type IResetPasswordSet = Pick<IUserData, 'password'> & { token: string };
-
-export type IChangePassword = Pick<IUserData, 'password'> & {
-  oldPassword: string;
-};

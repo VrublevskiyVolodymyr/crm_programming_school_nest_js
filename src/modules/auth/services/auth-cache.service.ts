@@ -1,48 +1,48 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config/dist/config.service';
 
+import { UserID } from '../../../common/types/entity-ids.type';
 import { Config, JwtConfig } from '../../../config/config.types';
-import { RedisService } from '../../redis/redis.service';
+import { AccessTokenRepository } from '../../repository/services/access-token.repository';
 
 @Injectable()
 export class AuthCacheService {
   private jwtConfig: JwtConfig;
 
   constructor(
-    private readonly redisService: RedisService,
     private readonly configService: ConfigService<Config>,
+    private readonly accessTokenRepository: AccessTokenRepository,
   ) {
     this.jwtConfig = this.configService.get('jwt');
   }
 
-  public async saveToken(
-    token: string,
-    userId: string,
-    deviceId: string,
-  ): Promise<void> {
-    const key = this.getKey(userId, deviceId);
+  public async saveToken(token: string, userId: UserID): Promise<void> {
+    await this.accessTokenRepository.delete({ user_id: userId });
 
-    await this.redisService.deleteByKey(key);
-    await this.redisService.addOneToSet(key, token);
-    await this.redisService.expire(key, this.jwtConfig.accessExpiresIn);
+    const expiresAt = new Date(
+      Date.now() + this.jwtConfig.accessExpiresIn * 1000,
+    );
+    const newToken = this.accessTokenRepository.create({
+      access_token: token,
+      user_id: userId,
+      expires_at: expiresAt,
+    });
+
+    await this.accessTokenRepository.save(newToken);
   }
 
   public async isAccessTokenExist(
-    userId: string,
-    deviceId: string,
+    userId: UserID,
     token: string,
   ): Promise<boolean> {
-    const key = this.getKey(userId, deviceId);
-    const set = await this.redisService.sMembers(key);
-    return set.includes(token);
+    const tokenEntity = await this.accessTokenRepository.findOne({
+      where: { user_id: userId, access_token: token },
+    });
+
+    return !!tokenEntity && tokenEntity.expires_at > new Date();
   }
 
-  public async deleteToken(userId: string, deviceId: string): Promise<void> {
-    const key = this.getKey(userId, deviceId);
-    await this.redisService.deleteByKey(key);
-  }
-
-  private getKey(userId: string, deviceId: string): string {
-    return `ACCESS_TOKEN:${userId}:${deviceId}`;
+  public async deleteToken(userId: UserID): Promise<void> {
+    await this.accessTokenRepository.delete({ user_id: userId });
   }
 }

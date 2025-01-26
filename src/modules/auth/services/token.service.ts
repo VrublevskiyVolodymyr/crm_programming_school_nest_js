@@ -56,13 +56,9 @@ export class TokenService {
       case TokenType.REFRESH:
         secret = this.jwtConfig.refreshSecret;
         break;
-      case ActionTokenTypeEnum.FORGOT_PASSWORD:
-        secret = this.actionConfig.actionForgotPasswordSecret;
+      case ActionTokenTypeEnum.SET_PASSWORD:
+        secret = this.actionConfig.actionSetPasswordSecret;
         break;
-      case ActionTokenTypeEnum.VERIFY_EMAIL:
-        secret = this.actionConfig.actionVerifyEmailSecret;
-        break;
-
       default:
         throw new Error('Unknown token type');
     }
@@ -77,13 +73,9 @@ export class TokenService {
     let expiresIn: number;
 
     switch (tokenType) {
-      case ActionTokenTypeEnum.FORGOT_PASSWORD:
-        secret = this.actionConfig.actionForgotPasswordSecret;
-        expiresIn = this.actionConfig.actionForgotPasswordExpiration;
-        break;
-      case ActionTokenTypeEnum.VERIFY_EMAIL:
-        secret = this.actionConfig.actionVerifyEmailSecret;
-        expiresIn = this.actionConfig.actionVerifyEmailExpiration;
+      case ActionTokenTypeEnum.SET_PASSWORD:
+        secret = this.actionConfig.actionSetPasswordSecret;
+        expiresIn = this.actionConfig.actionSetPasswordExpiration;
         break;
       default:
         throw new Error('Unknown token type');

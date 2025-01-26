@@ -29,7 +29,7 @@ export class RolesGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    if (!this.hasRequiredRoles(requiredRoles, user.roles)) {
+    if (!this.hasRequiredRoles(requiredRoles, user.role)) {
       throw new ForbiddenException(
         'You do not have permission to access this endpoint',
       );
@@ -40,8 +40,8 @@ export class RolesGuard implements CanActivate {
 
   private hasRequiredRoles(
     requiredRoles: UserRoleEnum[],
-    userRoles: UserRoleEnum[],
+    userRole: UserRoleEnum,
   ): boolean {
-    return requiredRoles.some((role) => userRoles.includes(role));
+    return requiredRoles.some((role) => userRole === role);
   }
 }

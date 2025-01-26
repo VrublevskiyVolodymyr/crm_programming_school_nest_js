@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString, MaxLength } from 'class-validator';
 
-export class GroupResDto {
+export class CommentResDto {
   @ApiProperty({
     description: 'Unique identifier for the group',
     readOnly: true,
@@ -17,5 +17,12 @@ export class GroupResDto {
   @IsOptional()
   @IsString()
   @MaxLength(128)
-  name: string;
+  comment: string;
+
+  @ApiProperty({
+    description: 'Comment creation date',
+    example: '2024-01-01T12:00:00Z',
+  })
+  @IsOptional()
+  created_at?: Date;
 }

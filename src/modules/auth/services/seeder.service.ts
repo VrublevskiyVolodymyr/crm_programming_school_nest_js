@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { PasswordService } from '../../auth/services/password.service';
 import { UserRepository } from '../../repository/services/user.repository';
-import { UserRoleEnum } from '../enums/user-role.enum';
+import { UserRoleEnum } from '../../users/enums/user-role.enum';
+import { PasswordService } from './password.service';
 
 @Injectable()
 export class SeederAdminService {
@@ -13,7 +13,7 @@ export class SeederAdminService {
 
   public async seedAdmin() {
     const email = 'admin@gmail.com';
-    const existingAdmin = this.userRepository.findOneBy({ email });
+    const existingAdmin = await this.userRepository.findOneBy({ email });
     if (!existingAdmin) {
       const admin = this.userRepository.create({
         name: 'admin',

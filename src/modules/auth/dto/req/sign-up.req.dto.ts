@@ -5,18 +5,21 @@ import { BaseAuthReqDto } from './base-auth.req.dto';
 
 export class SignUpReqDto extends PickType(BaseAuthReqDto, [
   'email',
-  'password',
-  'firstName',
-  'lastName',
-  'phone',
-  'deviceId',
+  'name',
+  'surname',
 ]) {
   @ApiHideProperty()
-  roles?: UserRoleEnum[];
+  role?: UserRoleEnum;
 
   @ApiHideProperty()
-  public is_verified?: boolean;
+  public last_login?: Date;
 
   @ApiHideProperty()
   public is_active?: boolean;
+
+  @ApiHideProperty()
+  public is_superuser?: boolean;
+
+  @ApiHideProperty()
+  public is_stuff?: boolean;
 }
