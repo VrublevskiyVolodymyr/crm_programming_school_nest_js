@@ -51,8 +51,8 @@ export class OrdersService {
     const next = page < maxPage ? page + 1 : null;
 
     return {
-      totalItems: totalRecords,
-      totalPages: maxPage,
+      total_items: totalRecords,
+      total_pages: maxPage,
       prev,
       next,
       items: orders.map((order) => OrderMapper.toBaseOrderDto(order)),
