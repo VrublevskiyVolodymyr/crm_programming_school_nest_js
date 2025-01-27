@@ -35,7 +35,7 @@ export class AuthService {
     private readonly configService: ConfigService<Config>,
   ) {}
 
-  public async signIn(dto: SignInReqDto): Promise<AuthResDto> {
+  public async signIn(dto: SignInReqDto): Promise<TokenPairResDto> {
     const user = await this.userRepository.findOne({
       where: { email: dto.email },
       select: { id: true, password: true, is_active: true },
@@ -79,7 +79,7 @@ export class AuthService {
     const userEntity = await this.userRepository.findOneBy({ id: user.id });
     userEntity.last_login = new Date(Date.now());
     await this.userRepository.save(userEntity);
-    return { user: UserMapper.toAdminResponseDTO(userEntity), tokens };
+    return { ...tokens };
   }
 
   public async refresh(userData: IUserData): Promise<TokenPairResDto> {

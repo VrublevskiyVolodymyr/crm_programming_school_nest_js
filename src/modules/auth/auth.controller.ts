@@ -13,7 +13,6 @@ import { CurrentUser } from './decorators/current-user.decorator';
 import { SkipAuth } from './decorators/skip-auth.decorator';
 import { PasswordReqDto } from './dto/req/password.req.dto';
 import { SignInReqDto } from './dto/req/sign-in.req.dto';
-import { AuthResDto } from './dto/res/auth.res.dto';
 import { TokenPairResDto } from './dto/res/token-pair.res.dto';
 import { ActionTokenTypeEnum } from './enums/action-token-type.enum';
 import { JwtActionGuard } from './guards/jwt-action.guard';
@@ -33,7 +32,7 @@ export class AuthController {
       'This endpoint allows users to log in to the platform with their credentials, generating an authentication token.',
   })
   @Post('sign-in')
-  public async signIn(@Body() dto: SignInReqDto): Promise<AuthResDto> {
+  public async signIn(@Body() dto: SignInReqDto): Promise<TokenPairResDto> {
     return await this.authService.signIn(dto);
   }
 
