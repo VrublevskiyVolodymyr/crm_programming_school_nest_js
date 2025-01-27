@@ -139,7 +139,6 @@ Here is the link for the collection postman in the repository:
 ----
 ## Stay in touch
 - Author - [Volodymyr](https://github.com/VrublevskiyVolodymyr)
-- Mail me - v637904@gmail.com
 
 ----
 ### License
