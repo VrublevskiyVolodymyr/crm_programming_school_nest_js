@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiConflictResponse,
@@ -12,6 +20,7 @@ import { CommentReqDto } from '../comments/dto/req/comment.req.dto';
 import { CommentResDto } from '../comments/dto/res/comment.res.dto';
 import { CommentsService } from '../comments/services/comments.service';
 import { BaseOrderDto } from './dto/req/base-order.dto';
+import { EditOrderDto } from './dto/req/edit-order.dto';
 import { OrderQueryDto } from './dto/req/order-query.dto';
 import { OrderPaginatedList } from './dto/res/order-paginated.res.dto';
 import { OrdersService } from './services/orders.service';
@@ -48,6 +57,21 @@ export class OrdersController {
   @Get('/:orderId')
   async getOrder(@Param('orderId') orderId: number): Promise<BaseOrderDto> {
     return await this.ordersService.getOrder(orderId);
+  }
+
+  @ApiBearerAuth()
+  @ApiConflictResponse({ description: 'Conflict' })
+  @ApiOperation({
+    summary: 'Update order by id',
+    description: 'Update order by id.',
+  })
+  @Patch('/:orderId')
+  async updateOrder(
+    @Param('orderId') orderId: number,
+    @Body() editOrder: EditOrderDto,
+    @CurrentUser() userData: IUserData,
+  ): Promise<BaseOrderDto> {
+    return await this.ordersService.updateOrder(orderId, editOrder, userData);
   }
 
   @ApiBearerAuth()

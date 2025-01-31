@@ -3,6 +3,7 @@ import { GroupEntity } from '../../database/entities/group.entity';
 import { OrderEntity } from '../../database/entities/order.entity';
 import { CommentResDto } from '../comments/dto/res/comment.res.dto';
 import { GroupResDto } from '../groups/dto/res/group.res.dto';
+import { AdminUserResDto } from '../users/dto/res/admin-user.res.dto';
 import { UserMapper } from '../users/user.mapper';
 import { BaseOrderDto } from './dto/req/base-order.dto';
 
@@ -49,9 +50,16 @@ export class OrderMapper {
   }
 
   public static mapToCommentResDto(comment: CommentEntity): CommentResDto {
+    let manager: AdminUserResDto | null = null;
+
+    if (comment.manager) {
+      manager = UserMapper.toAdminResponseDTO(comment.manager);
+    }
+
     return {
       id: comment.id,
       comment: comment.comment,
+      manager: manager,
       created_at: comment.created_at,
     } as CommentResDto;
   }

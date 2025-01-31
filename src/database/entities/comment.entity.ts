@@ -23,9 +23,6 @@ export class CommentEntity extends CreateUpdateModel {
   @Column('bigint', { name: 'order_id' })
   order_id: number;
 
-  @Column()
-  user_id: UserID;
-
   @ManyToOne(() => UserEntity, (user) => user.id, {
     cascade: ['remove', 'update'],
     eager: true,

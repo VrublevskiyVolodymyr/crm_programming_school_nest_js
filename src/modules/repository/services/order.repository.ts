@@ -108,7 +108,9 @@ export class OrderRepository extends Repository<OrderEntity> {
     });
     query.leftJoinAndSelect(`${TableNameEnum.ORDERS}.manager`, 'manager');
     query.leftJoinAndSelect(`${TableNameEnum.ORDERS}.group`, 'tableGroup');
-    query.leftJoinAndSelect(`${TableNameEnum.ORDERS}.comments`, 'comments');
+    query
+      .leftJoinAndSelect(`${TableNameEnum.ORDERS}.comments`, 'comments')
+      .leftJoinAndSelect('comments.manager', 'commentManager');
 
     query.skip((page - 1) * limit).take(limit);
 

@@ -212,7 +212,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Misha\",\r\n    \"surname\": \"Vernydub\",\r\n    \"email\": \"misha@gmail.com\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Olya\",\r\n    \"surname\": \"Dub\",\r\n    \"email\": \"olya@gmail.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -427,13 +427,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/orders/498",
+							"raw": "{{baseURL}}/orders/500",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"orders",
-								"498"
+								"500"
 							]
 						}
 					},
@@ -455,13 +455,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/orders/498/comments",
+							"raw": "{{baseURL}}/orders/500/comments",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"orders",
-								"498",
+								"500",
 								"comments"
 							]
 						}
@@ -485,7 +485,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"comment\": \"This is a comment1\"\r\n}",
+							"raw": "{\r\n    \"comment\": \"This is a comment5\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -501,6 +501,43 @@
 								"orders",
 								"500",
 								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edit order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Jhon\",\r\n    \"surname\": \"Oleksi\",\r\n    \"email\": \"max@gmail.com\",\r\n    \"phone\": \"097924259601\",\r\n    \"age\": 30,\r\n    \"course\": \"QACX\",\r\n    \"course_format\": \"static\",\r\n    \"course_type\": \"vip\",\r\n    \"alreadyPaid\": 1000,\r\n    \"sum\": 10000,\r\n    \"status\": \"In work\",\r\n    \"group\": \"Group_1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/orders/500",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"orders",
+								"500"
 							]
 						}
 					},
@@ -588,7 +625,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"group\": \"Group4\"\r\n}",
+							"raw": "{\r\n  \"group\": \"Group5\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

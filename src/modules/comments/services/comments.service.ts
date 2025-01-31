@@ -48,7 +48,7 @@ export class CommentsService {
       const newComment = this.commentRepository.create({
         comment: dto.comment,
         order_id: orderId,
-        user_id: userData.userId,
+        manager: user,
       });
       const savedComment = await this.commentRepository.save(newComment);
       order.userId = userData.userId;
@@ -58,7 +58,6 @@ export class CommentsService {
         order.status = 'In work';
       }
       await this.orderRepository.save(order);
-
       return OrderMapper.mapToCommentResDto(savedComment);
     } else throw new ForbiddenException('You cannot do it');
   }

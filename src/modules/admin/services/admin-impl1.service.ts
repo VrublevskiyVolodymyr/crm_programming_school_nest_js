@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -8,6 +9,7 @@ import { UserID } from '../../../common/types/entity-ids.type';
 import { SignUpReqDto } from '../../auth/dto/req/sign-up.req.dto';
 import { ActionResDto } from '../../auth/dto/res/token-pair.res.dto';
 import { ActionTokenTypeEnum } from '../../auth/enums/action-token-type.enum';
+import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { PasswordService } from '../../auth/services/password.service';
 import { TokenService } from '../../auth/services/token.service';
 import { ActionTokenRepository } from '../../repository/services/action-token.repository';
@@ -99,20 +101,34 @@ export class AdminServiceImpl1 implements AdminService {
     return { actionToken };
   }
 
-  public async banManager(userId: UserID): Promise<AdminUserResDto> {
+  public async banManager(
+    userId: UserID,
+    userData: IUserData,
+  ): Promise<AdminUserResDto> {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new NotFoundException(`User with id ${userId} not found`);
+    }
+    const me = userData.userId === userId;
+    if (me) {
+      throw new BadRequestException();
     }
     this.userRepository.merge(user, { is_active: false });
     const savedUser = await this.userRepository.save(user);
     return UserMapper.toAdminResponseDTO(savedUser);
   }
 
-  public async unbanManager(userId: UserID): Promise<AdminUserResDto> {
+  public async unbanManager(
+    userId: UserID,
+    userData: IUserData,
+  ): Promise<AdminUserResDto> {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new NotFoundException(`User with id ${userId} not found`);
+    }
+    const me = userData.userId === userId;
+    if (me) {
+      throw new BadRequestException();
     }
     this.userRepository.merge(user, { is_active: true });
     const savedUser = await this.userRepository.save(user);

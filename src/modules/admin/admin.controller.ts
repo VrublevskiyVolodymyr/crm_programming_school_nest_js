@@ -9,7 +9,12 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiConflictResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiConflictResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { UserID } from '../../common/types/entity-ids.type';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -20,6 +25,8 @@ import { AdminUserResDto } from '../users/dto/res/admin-user.res.dto';
 import { PaginationListResDto } from '../users/dto/res/pagination-list.res.dto';
 import { UserRoleEnum } from '../users/enums/user-role.enum';
 import { AdminService } from './services/admin.service';
+import { CurrentUser } from "../auth/decorators/current-user.decorator";
+import { IUserData } from "../auth/interfaces/user-data.interface";
 
 @ApiTags('Admin')
 @Controller('admin')
@@ -67,8 +74,9 @@ export class AdminController {
   @Patch('users/:userId/ban')
   public async banManager(
     @Param('userId', ParseUUIDPipe) userId: UserID,
+    @CurrentUser() userData: IUserData,
   ): Promise<AdminUserResDto> {
-    return await this.adminService.banManager(userId);
+    return await this.adminService.banManager(userId, userData);
   }
 
   @ApiBearerAuth()
@@ -80,8 +88,9 @@ export class AdminController {
   @Patch('users/:userId/unban')
   public async unbanManager(
     @Param('userId', ParseUUIDPipe) userId: UserID,
+    @CurrentUser() userData: IUserData,
   ): Promise<AdminUserResDto> {
-    return await this.adminService.unbanManager(userId);
+    return await this.adminService.unbanManager(userId, userData);
   }
 
   @ApiBearerAuth()

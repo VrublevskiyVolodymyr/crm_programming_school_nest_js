@@ -1,19 +1,27 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 
 import { IUserData } from '../../auth/interfaces/user-data.interface';
+import { GroupRepository } from '../../repository/services/group.repository';
 import { OrderRepository } from '../../repository/services/order.repository';
+import { UserRepository } from '../../repository/services/user.repository';
 import { BaseOrderDto } from '../dto/req/base-order.dto';
+import { EditOrderDto } from '../dto/req/edit-order.dto';
 import { OrderQueryDto } from '../dto/req/order-query.dto';
 import { OrderPaginatedList } from '../dto/res/order-paginated.res.dto';
 import { OrderMapper } from '../order.mapper';
 
 @Injectable()
 export class OrdersService {
-  constructor(private readonly orderRepository: OrderRepository) {}
+  constructor(
+    private readonly orderRepository: OrderRepository,
+    private readonly userRepository: UserRepository,
+    private readonly groupRepository: GroupRepository,
+  ) {}
 
   async getAllOrders(
     query: OrderQueryDto,
@@ -81,5 +89,94 @@ export class OrdersService {
     }
 
     return OrderMapper.toBaseOrderDto(order);
+  }
+
+  async updateOrder(
+    orderId: number,
+    editOrder: EditOrderDto,
+    userData: IUserData,
+  ) {
+    if (!(orderId && orderId > 0)) {
+      throw new BadRequestException('Enter valid order id');
+    }
+
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+      relations: ['group', 'manager', 'comments'],
+      order: {
+        comments: {
+          created_at: 'DESC',
+        },
+      },
+    });
+
+    if (!order) {
+      throw new NotFoundException(
+        `Order with id ${orderId} not found in data base`,
+      );
+    }
+    const user = await this.userRepository.findOneBy({ id: userData.userId });
+    const isOwner = userData.userId === order.userId;
+    const isManagerNotAssigned = order.userId === null;
+
+    if (isOwner || isManagerNotAssigned) {
+      if (editOrder.name != null && editOrder.name !== '') {
+        order.name = editOrder.name;
+      }
+      if (editOrder.surname != null && editOrder.surname !== '') {
+        order.surname = editOrder.surname;
+      }
+      if (editOrder.email != null && editOrder.email !== '') {
+        order.email = editOrder.email;
+      }
+      if (editOrder.phone != null && editOrder.phone !== '') {
+        order.phone = editOrder.phone;
+      }
+      if (editOrder.age != null) {
+        order.age = editOrder.age;
+      }
+      if (editOrder.course != null && editOrder.course !== '') {
+        order.course = editOrder.course;
+      }
+      if (editOrder.course_format != null && editOrder.course_format !== '') {
+        order.course_format = editOrder.course_format;
+      }
+      if (editOrder.course_type != null && editOrder.course_type !== '') {
+        order.course_type = editOrder.course_type;
+      }
+      if (editOrder.alreadyPaid != null) {
+        order.alreadyPaid = editOrder.alreadyPaid;
+      }
+      if (editOrder.sum != null) {
+        order.sum = editOrder.sum;
+      }
+      if (editOrder.status != null && editOrder.status !== '') {
+        order.status = editOrder.status;
+        if (editOrder.status === 'New') {
+          order.manager = null;
+        } else {
+          order.manager = user;
+        }
+      } else {
+        order.manager = user;
+        order.status = 'In work';
+      }
+
+      if (editOrder.group?.trim()) {
+        let group = await this.groupRepository.findOneBy({
+          name: editOrder.group,
+        });
+        if (!group) {
+          group = await this.groupRepository.save(
+            this.groupRepository.create({ name: editOrder.group }),
+          );
+        }
+        order.group = group;
+      }
+
+      const savedOrder = await this.orderRepository.save(order);
+
+      return OrderMapper.toBaseOrderDto(savedOrder);
+    } else throw new ForbiddenException('You cannot do it');
   }
 }

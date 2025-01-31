@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsOptional, IsString, MaxLength, ValidateNested } from "class-validator";
+import { Type } from "class-transformer";
+import { AdminUserResDto } from "../../../users/dto/res/admin-user.res.dto";
 
 export class CommentResDto {
   @ApiProperty({
@@ -18,6 +20,12 @@ export class CommentResDto {
   @IsString()
   @MaxLength(128)
   comment: string;
+
+  @ApiProperty({ description: 'Manager information' })
+  @IsOptional()
+  @Type(() => AdminUserResDto)
+  @ValidateNested()
+  manager?: AdminUserResDto;
 
   @ApiProperty({
     description: 'Comment creation date',

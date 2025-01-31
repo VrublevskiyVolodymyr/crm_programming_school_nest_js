@@ -4,6 +4,7 @@ import { ActionResDto } from '../../auth/dto/res/token-pair.res.dto';
 import { PaginationQueryDto } from '../../users/dto/req/pagination-query.dto';
 import { AdminUserResDto } from '../../users/dto/res/admin-user.res.dto';
 import { PaginationListResDto } from '../../users/dto/res/pagination-list.res.dto';
+import { IUserData } from "../../auth/interfaces/user-data.interface";
 
 export interface AdminService {
   signUpManager(dto: SignUpReqDto): Promise<AdminUserResDto>;
@@ -16,7 +17,7 @@ export interface AdminService {
 
   requestToken(id: UserID): Promise<ActionResDto>;
 
-  banManager(userId: UserID): Promise<AdminUserResDto>;
+  banManager(userId: UserID, userData: IUserData): Promise<AdminUserResDto>;
 
-  unbanManager(userId: UserID): Promise<AdminUserResDto>;
+  unbanManager(userId: UserID, userData: IUserData): Promise<AdminUserResDto>;
 }
