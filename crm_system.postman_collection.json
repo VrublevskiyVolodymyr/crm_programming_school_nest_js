@@ -17,8 +17,8 @@
 							"script": {
 								"exec": [
 									"const res = pm.response.json()\r",
-									"pm.environment.set(\"accessToken\", res.tokens.accessToken);\r",
-									"pm.environment.set(\"refreshToken\", res.tokens.refreshToken);"
+									"pm.environment.set(\"accessToken\", res.accessToken);\r",
+									"pm.environment.set(\"refreshToken\", res.refreshToken);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -27,8 +27,11 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"packages": {},
-								"type": "text/javascript"
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -128,7 +131,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"password\":\"Pa$$word4\"\r\n}",
+							"raw": "{\r\n    \"password\":\"Pa$$word5\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -212,7 +215,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Olya\",\r\n    \"surname\": \"Dub\",\r\n    \"email\": \"olya@gmail.com\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Inna\",\r\n    \"surname\": \"Chub\",\r\n    \"email\": \"inna@gmail.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -351,7 +354,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/admin/users?page=2",
+							"raw": "{{baseURL}}/admin/users?page=1",
 							"host": [
 								"{{baseURL}}"
 							],
@@ -362,7 +365,7 @@
 							"query": [
 								{
 									"key": "page",
-									"value": "2"
+									"value": "1"
 								}
 							]
 						}
@@ -390,7 +393,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/orders?page=1&status=Dubbing",
+							"raw": "{{baseURL}}/orders?page=1&name=Jhon&surname=Oleksi&email=@gmail&age=30&course=QACX&course_type=vip&phone=097&course_format=static&group=Group_1&my=true&order=id&limit=25",
 							"host": [
 								"{{baseURL}}"
 							],
@@ -403,8 +406,62 @@
 									"value": "1"
 								},
 								{
-									"key": "status",
-									"value": "Dubbing"
+									"key": "name",
+									"value": "Jhon"
+								},
+								{
+									"key": "surname",
+									"value": "Oleksi"
+								},
+								{
+									"key": "email",
+									"value": "@gmail"
+								},
+								{
+									"key": "age",
+									"value": "30"
+								},
+								{
+									"key": "course",
+									"value": "QACX"
+								},
+								{
+									"key": "course_type",
+									"value": "vip"
+								},
+								{
+									"key": "phone",
+									"value": "097"
+								},
+								{
+									"key": "course_format",
+									"value": "static"
+								},
+								{
+									"key": "group",
+									"value": "Group_1"
+								},
+								{
+									"key": "startDate",
+									"value": "2021-10-20",
+									"disabled": true
+								},
+								{
+									"key": "endDate",
+									"value": "2023-01-10",
+									"disabled": true
+								},
+								{
+									"key": "my",
+									"value": "true"
+								},
+								{
+									"key": "order",
+									"value": "id"
+								},
+								{
+									"key": "limit",
+									"value": "25"
 								}
 							]
 						}
@@ -485,7 +542,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"comment\": \"This is a comment5\"\r\n}",
+							"raw": "{\r\n    \"comment\": \"This is a comment2\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -493,13 +550,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseURL}}/orders/500/comments",
+							"raw": "{{baseURL}}/orders/499/comments",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"orders",
-								"500",
+								"499",
 								"comments"
 							]
 						}
@@ -625,7 +682,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"group\": \"Group5\"\r\n}",
+							"raw": "{\r\n  \"group\": \"Group_6\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
