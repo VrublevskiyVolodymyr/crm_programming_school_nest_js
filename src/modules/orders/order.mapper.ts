@@ -11,7 +11,7 @@ export class OrderMapper {
   public static toBaseOrderDto(entity: OrderEntity): BaseOrderDto {
     const dto = new BaseOrderDto();
 
-    dto.id = entity.id;
+    dto.id = Number(entity.id);
     dto.name = entity.name;
     dto.surname = entity.surname;
     dto.email = entity.email;
@@ -59,6 +59,7 @@ export class OrderMapper {
     return {
       id: comment.id,
       comment: comment.comment,
+      order_id: Number(comment.order_id),
       manager: manager,
       created_at: comment.created_at,
     } as CommentResDto;

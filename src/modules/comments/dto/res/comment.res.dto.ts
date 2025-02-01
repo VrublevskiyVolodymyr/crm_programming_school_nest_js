@@ -1,7 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, MaxLength, ValidateNested } from "class-validator";
-import { Type } from "class-transformer";
-import { AdminUserResDto } from "../../../users/dto/res/admin-user.res.dto";
+import { Type } from 'class-transformer';
+import {
+  IsInt,
+  IsOptional,
+  IsString,
+  MaxLength,
+  ValidateNested
+} from "class-validator";
+
+import { AdminUserResDto } from '../../../users/dto/res/admin-user.res.dto';
 
 export class CommentResDto {
   @ApiProperty({
@@ -20,6 +27,15 @@ export class CommentResDto {
   @IsString()
   @MaxLength(128)
   comment: string;
+
+  @ApiProperty({
+    description: 'Unique identifier for the order',
+    readOnly: true,
+    example: 1,
+  })
+  @IsOptional()
+  @IsInt()
+  order_id: number;
 
   @ApiProperty({ description: 'Manager information' })
   @IsOptional()
