@@ -20,31 +20,6 @@ export class UserRepository extends Repository<UserEntity> {
     return await this.findOneOrFail({ where: { id: userId } });
   }
 
-  public async findByParams(
-    queryParams: Record<string, any>,
-  ): Promise<UserEntity[]> {
-    const query = this.createQueryBuilder(TableNameEnum.USERS);
-
-    Object.entries(queryParams).forEach(([key, value]) => {
-      if (value !== undefined) {
-        if (key === 'roles' && Array.isArray(value)) {
-          query.andWhere(
-            `"${TableNameEnum.USERS}".roles && ARRAY[:...${key}]::users_roles_enum[]`,
-            {
-              [key]: value,
-            },
-          );
-        } else {
-          query.andWhere(`${TableNameEnum.USERS}.${key} = :${key}`, {
-            [key]: value,
-          });
-        }
-      }
-    });
-
-    return await query.getMany();
-  }
-
   public async findAllWithPagination(
     page: number = 1,
     limit: number = 10,

@@ -17,16 +17,17 @@ import {
 } from '@nestjs/swagger';
 
 import { UserID } from '../../common/types/entity-ids.type';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { SignUpReqDto } from '../auth/dto/req/sign-up.req.dto';
 import { ActionResDto } from '../auth/dto/res/token-pair.res.dto';
+import { IUserData } from '../auth/interfaces/user-data.interface';
+import { OrderStatisticsDto } from '../orders/dto/res/order-statistic.res.dto';
 import { PaginationQueryDto } from '../users/dto/req/pagination-query.dto';
 import { AdminUserResDto } from '../users/dto/res/admin-user.res.dto';
 import { PaginationListResDto } from '../users/dto/res/pagination-list.res.dto';
 import { UserRoleEnum } from '../users/enums/user-role.enum';
 import { AdminService } from './services/admin.service';
-import { CurrentUser } from "../auth/decorators/current-user.decorator";
-import { IUserData } from "../auth/interfaces/user-data.interface";
 
 @ApiTags('Admin')
 @Controller('admin')
@@ -105,5 +106,29 @@ export class AdminController {
     @Query() query: PaginationQueryDto,
   ): Promise<PaginationListResDto> {
     return await this.adminService.findAllWithPagination(query);
+  }
+
+  @ApiBearerAuth()
+  @Roles('admin')
+  @ApiOperation({
+    summary: 'get all orders statistic',
+    description: 'Get all orders statistic',
+  })
+  @Get('statistic/orders')
+  public async getOrderStatistics(): Promise<OrderStatisticsDto> {
+    return await this.adminService.getOrderStatistics();
+  }
+
+  @ApiBearerAuth()
+  @Roles('admin')
+  @ApiOperation({
+    summary: 'get all orders statistic',
+    description: 'Get all orders statistic',
+  })
+  @Get('statistic/users/:userId')
+  public async getManagerStatistics(
+    @Param('userId', ParseUUIDPipe) userId: UserID,
+  ): Promise<OrderStatisticsDto> {
+    return await this.adminService.getManagerStatistics(userId);
   }
 }

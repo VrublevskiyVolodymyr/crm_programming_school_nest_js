@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, IsNull, Repository } from 'typeorm';
 
 import { UserID } from '../../../common/types/entity-ids.type';
 import { OrderEntity } from '../../../database/entities/order.entity';
+import { UserEntity } from '../../../database/entities/user.entity';
 import { TableNameEnum } from '../../../database/enums/table-name.enum';
 import { OrderQueryDto } from '../../orders/dto/req/order-query.dto';
 
@@ -119,5 +120,36 @@ export class OrderRepository extends Repository<OrderEntity> {
     const [orders, total] = await query.getManyAndCount();
 
     return [orders, total];
+  }
+
+  public async countByStatus(status: string | null): Promise<number> {
+    if (status === null) {
+      return await this.count({ where: { status: IsNull() } });
+    }
+    return await this.count({ where: { status } });
+  }
+
+  public async countByManager(manager: UserEntity): Promise<number> {
+    const query = this.createQueryBuilder(`${TableNameEnum.ORDERS}`)
+      .leftJoinAndSelect(`${TableNameEnum.ORDERS}.manager`, 'manager')
+      .where('manager.id = :managerId', { managerId: manager.id });
+    return await query.getCount();
+  }
+
+  public async countByStatusAndManager(
+    status: string | null,
+    manager: UserEntity,
+  ): Promise<number> {
+    const query = this.createQueryBuilder(`${TableNameEnum.ORDERS}`)
+      .leftJoinAndSelect(`${TableNameEnum.ORDERS}.manager`, 'manager')
+      .where('manager.id = :managerId', { managerId: manager.id });
+
+    if (status === null) {
+      query.andWhere(`${TableNameEnum.ORDERS}.status IS NULL`);
+    } else {
+      query.andWhere(`${TableNameEnum.ORDERS}.status = :status`, { status });
+    }
+
+    return await query.getCount();
   }
 }

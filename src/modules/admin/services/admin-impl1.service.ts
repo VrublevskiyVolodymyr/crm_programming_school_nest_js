@@ -4,6 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { query } from 'express';
 
 import { UserID } from '../../../common/types/entity-ids.type';
 import { SignUpReqDto } from '../../auth/dto/req/sign-up.req.dto';
@@ -12,7 +13,12 @@ import { ActionTokenTypeEnum } from '../../auth/enums/action-token-type.enum';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { PasswordService } from '../../auth/services/password.service';
 import { TokenService } from '../../auth/services/token.service';
+import {
+  OrderStatisticsDto,
+  StatusCountDto,
+} from '../../orders/dto/res/order-statistic.res.dto';
 import { ActionTokenRepository } from '../../repository/services/action-token.repository';
+import { OrderRepository } from '../../repository/services/order.repository';
 import { UserRepository } from '../../repository/services/user.repository';
 import { PaginationQueryDto } from '../../users/dto/req/pagination-query.dto';
 import { AdminUserResDto } from '../../users/dto/res/admin-user.res.dto';
@@ -28,6 +34,7 @@ export class AdminServiceImpl1 implements AdminService {
     private readonly passwordService: PasswordService,
     private readonly tokenService: TokenService,
     private readonly actionTokenRepository: ActionTokenRepository,
+    private readonly orderRepository: OrderRepository,
   ) {}
 
   public async signUpManager(dto: SignUpReqDto): Promise<AdminUserResDto> {
@@ -133,5 +140,92 @@ export class AdminServiceImpl1 implements AdminService {
     this.userRepository.merge(user, { is_active: true });
     const savedUser = await this.userRepository.save(user);
     return UserMapper.toAdminResponseDTO(savedUser);
+  }
+
+  async getOrderStatistics(): Promise<OrderStatisticsDto> {
+    const totalCount = await this.orderRepository.count();
+    const nullStatusCount = await this.orderRepository.countByStatus(null);
+    const newStatusCount = await this.orderRepository.countByStatus('New');
+    const newAndNullStatusCount = newStatusCount + nullStatusCount;
+
+    const statuses: StatusCountDto[] = [
+      {
+        status: 'In work',
+        count: await this.orderRepository.countByStatus('In work'),
+      },
+      {
+        status: 'Agree',
+        count: await this.orderRepository.countByStatus('Agree'),
+      },
+      { status: 'New', count: newAndNullStatusCount },
+      {
+        status: 'Disagree',
+        count: await this.orderRepository.countByStatus('Disagree'),
+      },
+      {
+        status: 'Dubbing',
+        count: await this.orderRepository.countByStatus('Dubbing'),
+      },
+    ];
+
+    return {
+      total_count: totalCount,
+      statuses,
+    };
+  }
+
+  async getManagerStatistics(userId: UserID): Promise<OrderStatisticsDto> {
+    const manager = await this.userRepository.findOneBy({ id: userId });
+    if (!manager) {
+      throw new NotFoundException(`Manager with id ${userId} not found`);
+    }
+
+    const totalCount = await this.orderRepository.countByManager(manager);
+    const nullStatusCount = await this.orderRepository.countByStatusAndManager(
+      null,
+      manager,
+    );
+    const newStatusCount = await this.orderRepository.countByStatusAndManager(
+      'New',
+      manager,
+    );
+    const newAndNullStatusCount = newStatusCount + nullStatusCount;
+
+    const statuses: StatusCountDto[] = [
+      {
+        status: 'In work',
+        count: await this.orderRepository.countByStatusAndManager(
+          'In work',
+          manager,
+        ),
+      },
+      {
+        status: 'Agree',
+        count: await this.orderRepository.countByStatusAndManager(
+          'Agree',
+          manager,
+        ),
+      },
+      {
+        status: 'New',
+        count: newAndNullStatusCount,
+      },
+      {
+        status: 'Disagree',
+        count: await this.orderRepository.countByStatusAndManager(
+          'Disagree',
+          manager,
+        ),
+      },
+      {
+        status: 'Dubbing',
+        count: await this.orderRepository.countByStatusAndManager(
+          'Dubbing',
+          manager,
+        ),
+      },
+    ];
+
+    return { total_count: totalCount, statuses };
   }
 }

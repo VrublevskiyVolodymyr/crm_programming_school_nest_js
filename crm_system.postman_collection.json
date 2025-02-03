@@ -371,6 +371,65 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "get all statistic",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/admin/statistic/orders",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"admin",
+								"statistic",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get statistic by manager id Copy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/admin/statistic/users/c96f919d-baba-42a7-841f-41a345a9c0a0",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"admin",
+								"statistic",
+								"users",
+								"c96f919d-baba-42a7-841f-41a345a9c0a0"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
