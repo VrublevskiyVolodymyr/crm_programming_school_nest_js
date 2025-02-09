@@ -4,6 +4,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import * as ExcelJS from 'exceljs';
+import { Response } from 'express';
 
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { GroupRepository } from '../../repository/services/group.repository';
@@ -178,5 +180,68 @@ export class OrdersService {
 
       return OrderMapper.toBaseOrderDto(savedOrder);
     } else throw new ForbiddenException('You cannot do it');
+  }
+
+  async exportOrdersToExcel(
+    query: OrderQueryDto,
+    userData: IUserData,
+    res: Response,
+  ): Promise<void> {
+    const { limit = 25, page = 1 } = query;
+
+    let sortDirection: 'ASC' | 'DESC' = 'DESC';
+    let sortBy: string = 'created_at';
+    if (query.order) {
+      sortDirection = query.order.startsWith('-') ? 'DESC' : 'ASC';
+      sortBy = query.order.replace('-', '');
+    }
+
+    const [orders] = await this.orderRepository.findOrders(
+      query,
+      sortBy,
+      sortDirection,
+      page,
+      limit,
+      userData.userId,
+    );
+
+    if (!orders.length) {
+      throw new BadRequestException('No orders found to export');
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Orders');
+
+    worksheet.columns = [
+      { header: 'ID', key: 'id', width: 10 },
+      { header: 'Name', key: 'name', width: 20 },
+      { header: 'Surname', key: 'surname', width: 20 },
+      { header: 'Email', key: 'email', width: 30 },
+      { header: 'Phone', key: 'phone', width: 15 },
+      { header: 'Age', key: 'age', width: 10 },
+      { header: 'Course', key: 'course', width: 20 },
+      { header: 'Course Format', key: 'course_format', width: 20 },
+      { header: 'Course Type', key: 'course_type', width: 20 },
+      { header: 'Status', key: 'status', width: 15 },
+      { header: 'Sum', key: 'sum', width: 15 },
+      { header: 'Already Paid', key: 'alreadyPaid', width: 15 },
+      { header: 'Group', key: 'group', width: 20 },
+      { header: 'Created At', key: 'created_at', width: 20 },
+      { header: 'Manager', key: 'manager', width: 20 },
+    ];
+
+    orders.forEach((order) => {
+      worksheet.addRow(OrderMapper.toExcelOrderDto(order));
+    });
+
+    const buffer = (await workbook.xlsx.writeBuffer()) as Buffer;
+
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename="filtered_orders.xlsx"',
+    );
+
+    res.send(buffer);
   }
 }

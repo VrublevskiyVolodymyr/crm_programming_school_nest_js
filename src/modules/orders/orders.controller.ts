@@ -6,6 +6,7 @@ import {
   Patch,
   Post,
   Query,
+  Res,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -13,6 +14,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { Response } from 'express';
 
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
@@ -45,6 +47,22 @@ export class OrdersController {
     @CurrentUser() userData: IUserData,
   ): Promise<OrderPaginatedList> {
     return await this.ordersService.getAllOrders(query, userData);
+  }
+
+  @ApiBearerAuth()
+  @ApiConflictResponse({ description: 'Conflict' })
+  @ApiOperation({
+    summary: 'Export filtered orders to Excel',
+    description:
+      'Export orders that match the filter criteria to an Excel file.',
+  })
+  @Get('/excel')
+  async getFilteredOrdersExcel(
+    @Query() query: OrderQueryDto,
+    @CurrentUser() userData: IUserData,
+    @Res() res: Response,
+  ): Promise<void> {
+    return await this.ordersService.exportOrdersToExcel(query, userData, res);
   }
 
   @ApiBearerAuth()

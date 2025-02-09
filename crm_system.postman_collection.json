@@ -452,7 +452,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/orders?page=1&name=Jhon&surname=Oleksi&email=@gmail&age=30&course=QACX&course_type=vip&phone=097&course_format=static&group=Group_1&my=true&order=id&limit=25",
+							"raw": "{{baseURL}}/orders?page=1&name=Jhon&surname=Oleksi&email=@gmail&age=30&course=QACX&course_type=vip&phone=097&course_format=online&group=Group_1&my=true&order=id&limit=25",
 							"host": [
 								"{{baseURL}}"
 							],
@@ -494,7 +494,7 @@
 								},
 								{
 									"key": "course_format",
-									"value": "static"
+									"value": "online"
 								},
 								{
 									"key": "group",
@@ -521,6 +521,102 @@
 								{
 									"key": "limit",
 									"value": "25"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all orders by excel",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/orders/excel?page=1&name=Jhon&surname=Oleksi&email=@gmail&age=30&course=QACX&course_type=vip&phone=097&course_format=online&group=Group_1&my=true&order=id&limit=25&status=In work",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"orders",
+								"excel"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "name",
+									"value": "Jhon"
+								},
+								{
+									"key": "surname",
+									"value": "Oleksi"
+								},
+								{
+									"key": "email",
+									"value": "@gmail"
+								},
+								{
+									"key": "age",
+									"value": "30"
+								},
+								{
+									"key": "course",
+									"value": "QACX"
+								},
+								{
+									"key": "course_type",
+									"value": "vip"
+								},
+								{
+									"key": "phone",
+									"value": "097"
+								},
+								{
+									"key": "course_format",
+									"value": "online"
+								},
+								{
+									"key": "group",
+									"value": "Group_1"
+								},
+								{
+									"key": "startDate",
+									"value": "2021-10-20",
+									"disabled": true
+								},
+								{
+									"key": "endDate",
+									"value": "2023-01-10",
+									"disabled": true
+								},
+								{
+									"key": "my",
+									"value": "true"
+								},
+								{
+									"key": "order",
+									"value": "id"
+								},
+								{
+									"key": "limit",
+									"value": "25"
+								},
+								{
+									"key": "status",
+									"value": "In work"
 								}
 							]
 						}
