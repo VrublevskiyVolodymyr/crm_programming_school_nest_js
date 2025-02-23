@@ -11,16 +11,16 @@ export class GroupsService {
 
   async createGroup(dto: GroupReqDto): Promise<GroupResDto> {
     const groupExists = await this.groupRepository.existsBy({
-      name: dto.group,
+      name: dto.name,
     });
     if (groupExists) {
       throw new BadRequestException(
-        `Group with name "${dto.group}" already exists`,
+        `Group with name "${dto.name}" already exists`,
       );
     }
 
     const newGroup = this.groupRepository.create({
-      name: dto.group,
+      name: dto.name,
     });
 
     const savedGroup = await this.groupRepository.save(newGroup);

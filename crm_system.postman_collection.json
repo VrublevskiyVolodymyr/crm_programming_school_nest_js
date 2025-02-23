@@ -837,7 +837,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"group\": \"Group_6\"\r\n}",
+							"raw": "{\r\n  \"name\": \"Group_7\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

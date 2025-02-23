@@ -8,5 +8,5 @@ export class GroupReqDto {
   @IsString()
   @IsNotEmpty()
   @Type(() => String)
-  group: string;
+  name: string;
 }
