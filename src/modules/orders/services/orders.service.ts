@@ -187,7 +187,7 @@ export class OrdersService {
     userData: IUserData,
     res: Response,
   ): Promise<void> {
-    const { limit = 25, page = 1 } = query;
+    const { limit = 500, page = 1 } = query;
 
     let sortDirection: 'ASC' | 'DESC' = 'DESC';
     let sortBy: string = 'created_at';
