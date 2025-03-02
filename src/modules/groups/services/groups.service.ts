@@ -14,9 +14,9 @@ export class GroupsService {
       name: dto.name,
     });
     if (groupExists) {
-      throw new BadRequestException(
-        `Group with name "${dto.name}" already exists`,
-      );
+      throw new BadRequestException({
+        message: [`group with name "${dto.name}" already exists`],
+      });
     }
 
     const newGroup = this.groupRepository.create({
