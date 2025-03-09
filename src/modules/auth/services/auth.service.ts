@@ -11,10 +11,8 @@ import { ActionTokenRepository } from '../../repository/services/action-token.re
 import { RefreshTokenRepository } from '../../repository/services/refresh-token.repository';
 import { UserRepository } from '../../repository/services/user.repository';
 import { UsersService } from '../../users/services/users.service';
-import { UserMapper } from '../../users/user.mapper';
 import { PasswordReqDto } from '../dto/req/password.req.dto';
 import { SignInReqDto } from '../dto/req/sign-in.req.dto';
-import { AuthResDto } from '../dto/res/auth.res.dto';
 import { TokenPairResDto } from '../dto/res/token-pair.res.dto';
 import { ActionTokenTypeEnum } from '../enums/action-token-type.enum';
 import { IUserData } from '../interfaces/user-data.interface';
@@ -41,7 +39,7 @@ export class AuthService {
       select: { id: true, password: true, is_active: true },
     });
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Wrong email or password');
     }
 
     if (!user.is_active) {
@@ -56,7 +54,7 @@ export class AuthService {
     );
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Wrong email or password');
     }
     const tokens = await this.tokenService.generateAuthTokens({
       userId: user.id,
